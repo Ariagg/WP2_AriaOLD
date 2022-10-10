@@ -199,7 +199,7 @@ class CI_Encrypt {
 	 * This allows for backwards compatibility and a method to transition to the
 	 * new encryption algorithms.
 	 *
-	 * For more details, see https://codeigniter.com/userguide3/installation/upgrade_200.html#encryption
+	 * For more details, see https://codeigniter.com/userguide3/installation/upgrade_200.htmlencryption
 	 *
 	 * @param	string
 	 * @param	int		(mcrypt mode constant)
@@ -331,7 +331,7 @@ class CI_Encrypt {
 	/**
 	 * Adds permuted noise to the IV + encrypted data to protect
 	 * against Man-in-the-middle attacks on CBC mode ciphers
-	 * http://www.ciphersbyritter.com/GLOSSARY.HTM#IV
+	 * http://www.ciphersbyritter.com/GLOSSARY.HTMIV
 	 *
 	 * @param	string
 	 * @param	string

@@ -426,7 +426,7 @@ class CI_Encryption {
 			return FALSE;
 		}
 
-		// Use PKCS#7 padding in order to ensure compatibility with OpenSSL
+		// Use PKCS7 padding in order to ensure compatibility with OpenSSL
 		// and other implementations outside of PHP.
 		if (in_array(strtolower(mcrypt_enc_get_modes_name($params['handle'])), array('cbc', 'ecb'), TRUE))
 		{
@@ -600,7 +600,7 @@ class CI_Encryption {
 		}
 
 		$data = mdecrypt_generic($params['handle'], $data);
-		// Remove PKCS#7 padding, if necessary
+		// Remove PKCS7 padding, if necessary
 		if (in_array(strtolower(mcrypt_enc_get_modes_name($params['handle'])), array('cbc', 'ecb'), TRUE))
 		{
 			$data = self::substr($data, 0, -ord($data[self::strlen($data)-1]));

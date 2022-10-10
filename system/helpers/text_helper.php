@@ -62,7 +62,7 @@ if ( ! function_exists('word_limiter'))
 	 * @param	string	the end character. Usually an ellipsis
 	 * @return	string
 	 */
-	function word_limiter($str, $limit = 100, $end_char = '&#8230;')
+	function word_limiter($str, $limit = 100, $end_char = '&8230;')
 	{
 		if (trim($str) === '')
 		{
@@ -95,7 +95,7 @@ if ( ! function_exists('character_limiter'))
 	 * @param	string	the end character. Usually an ellipsis
 	 * @return	string
 	 */
-	function character_limiter($str, $n = 500, $end_char = '&#8230;')
+	function character_limiter($str, $n = 500, $end_char = '&8230;')
 	{
 		if (mb_strlen($str) < $n)
 		{
@@ -154,7 +154,7 @@ if ( ! function_exists('ascii_to_entities'))
 				*/
 				if (count($temp) === 1)
 				{
-					$out .= '&#'.array_shift($temp).';';
+					$out .= '&'.array_shift($temp).';';
 					$count = 1;
 				}
 
@@ -175,14 +175,14 @@ if ( ! function_exists('ascii_to_entities'))
 						? (($temp[0] % 16) * 4096) + (($temp[1] % 64) * 64) + ($temp[2] % 64)
 						: (($temp[0] % 32) * 64) + ($temp[1] % 64);
 
-					$out .= '&#'.$number.';';
+					$out .= '&'.$number.';';
 					$count = 1;
 					$temp = array();
 				}
 				// If this is the last iteration, just output whatever we have
 				elseif ($i === $length)
 				{
-					$out .= '&#'.implode(';', $temp).';';
+					$out .= '&'.implode(';', $temp).';';
 				}
 			}
 		}
@@ -206,7 +206,7 @@ if ( ! function_exists('entities_to_ascii'))
 	 */
 	function entities_to_ascii($str, $all = TRUE)
 	{
-		if (preg_match_all('/\&#(\d+)\;/', $str, $matches))
+		if (preg_match_all('/\&(\d+)\;/', $str, $matches))
 		{
 			for ($i = 0, $s = count($matches[0]); $i < $s; $i++)
 			{
@@ -236,7 +236,7 @@ if ( ! function_exists('entities_to_ascii'))
 		if ($all)
 		{
 			return str_replace(
-				array('&amp;', '&lt;', '&gt;', '&quot;', '&apos;', '&#45;'),
+				array('&amp;', '&lt;', '&gt;', '&quot;', '&apos;', '&45;'),
 				array('&', '<', '>', '"', "'", '-'),
 				$str
 			);
@@ -254,7 +254,7 @@ if ( ! function_exists('word_censor'))
 	 * Word Censoring Function
 	 *
 	 * Supply a string and an array of disallowed words and any
-	 * matched words will be converted to #### or to the replacement
+	 * matched words will be converted to  or to the replacement
 	 * word you've submitted.
 	 *
 	 * @param	string	the text string
@@ -275,7 +275,7 @@ if ( ! function_exists('word_censor'))
 		// set for performance reasons. As a result words like über
 		// will not match on a word boundary. Instead, we'll assume that
 		// a bad word will be bookeneded by any of these characters.
-		$delim = '[-_\'\"`(){}<>\[\]|!?@#%&,.:;^~*+=\/ 0-9\n\r\t]';
+		$delim = '[-_\'\"`(){}<>\[\]|!?@%&,.:;^~*+=\/ 0-9\n\r\t]';
 
 		foreach ($censored as $badword)
 		{
@@ -296,7 +296,7 @@ if ( ! function_exists('word_censor'))
 					$length = strlen($matches[$i][0]);
 					$str = substr_replace(
 						$str,
-						str_repeat('#', $length),
+						str_repeat('', $length),
 						$matches[$i][1],
 						$length
 					);
@@ -342,12 +342,12 @@ if ( ! function_exists('highlight_code'))
 		// Remove our artificially added PHP, and the syntax highlighting that came with it
 		$str = preg_replace(
 			array(
-				'/<span style="color: #([A-Z0-9]+)">&lt;\?php(&nbsp;| )/i',
-				'/(<span style="color: #[A-Z0-9]+">.*?)\?&gt;<\/span>\n<\/span>\n<\/code>/is',
-				'/<span style="color: #[A-Z0-9]+"\><\/span>/i'
+				'/<span style="color: ([A-Z0-9]+)">&lt;\?php(&nbsp;| )/i',
+				'/(<span style="color: [A-Z0-9]+">.*?)\?&gt;<\/span>\n<\/span>\n<\/code>/is',
+				'/<span style="color: [A-Z0-9]+"\><\/span>/i'
 			),
 			array(
-				'<span style="color: #$1">',
+				'<span style="color: $1">',
 				"$1</span>\n</span>\n</code>",
 				''
 			),

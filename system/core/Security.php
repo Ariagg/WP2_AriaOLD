@@ -56,7 +56,7 @@ class CI_Security {
 	 */
 	public $filename_bad_chars =	array(
 		'../', '<!--', '-->', '<', '>',
-		"'", '"', '&', '$', '#',
+		"'", '"', '&', '$', '',
 		'{', '}', '[', ']', '=',
 		';', '?', '%20', '%22',
 		'%3c',		// <
@@ -145,7 +145,7 @@ class CI_Security {
 		'-->'             => '--&gt;',
 		'<![CDATA['       => '&lt;![CDATA[',
 		'<comment>'	  => '&lt;comment&gt;',
-		'<%'              => '&lt;&#37;'
+		'<%'              => '&lt;&37;'
 	);
 
 	/**
@@ -156,7 +156,7 @@ class CI_Security {
 	protected $_never_allowed_regex = array(
 		'javascript\s*:',
 		'(\(?document\)?|\(?window\)?(\.document)?)\.(location|on\w*)',
-		'expression\s*(\(|&\#40;)', // CSS and IE
+		'expression\s*(\(|&\40;)', // CSS and IE
 		'vbscript\s*:', // IE, surprise!
 		'wscript\s*:', // IE
 		'jscript\s*:', // IE
@@ -220,7 +220,7 @@ class CI_Security {
 			$uri = load_class('URI', 'core');
 			foreach ($exclude_uris as $excluded)
 			{
-				if (preg_match('#^'.$excluded.'$#i'.(UTF8_ENABLED ? 'u' : ''), $uri->uri_string()))
+				if (preg_match('^'.$excluded.'$i'.(UTF8_ENABLED ? 'u' : ''), $uri->uri_string()))
 				{
 					return $this;
 				}
@@ -404,7 +404,7 @@ class CI_Security {
 			{
 				$oldstr = $str;
 				$str = rawurldecode($str);
-				$str = preg_replace_callback('#%(?:\s*[0-9a-f]){2,}#i', array($this, '_urldecodespaces'), $str);
+				$str = preg_replace_callback('%(?:\s*[0-9a-f]){2,}i', array($this, '_urldecodespaces'), $str);
 			}
 			while ($oldstr !== $str);
 			unset($oldstr);
@@ -478,7 +478,7 @@ class CI_Security {
 
 			// We only want to do this when it is followed by a non-word character
 			// That way valid stuff like "dealer to" does not become "dealerto"
-			$str = preg_replace_callback('#('.substr($word, 0, -3).')(\W)#is', array($this, '_compact_exploded_words'), $str);
+			$str = preg_replace_callback('('.substr($word, 0, -3).')(\W)is', array($this, '_compact_exploded_words'), $str);
 		}
 
 		/*
@@ -499,17 +499,17 @@ class CI_Security {
 
 			if (preg_match('/<a/i', $str))
 			{
-				$str = preg_replace_callback('#<a(?:rea)?[^a-z0-9>]+([^>]*?)(?:>|$)#si', array($this, '_js_link_removal'), $str);
+				$str = preg_replace_callback('<a(?:rea)?[^a-z0-9>]+([^>]*?)(?:>|$)si', array($this, '_js_link_removal'), $str);
 			}
 
 			if (preg_match('/<img/i', $str))
 			{
-				$str = preg_replace_callback('#<img[^a-z0-9]+([^>]*?)(?:\s?/?>|$)#si', array($this, '_js_img_removal'), $str);
+				$str = preg_replace_callback('<img[^a-z0-9]+([^>]*?)(?:\s?/?>|$)si', array($this, '_js_img_removal'), $str);
 			}
 
 			if (preg_match('/script|xss/i', $str))
 			{
-				$str = preg_replace('#</*(?:script|xss).*?>#si', '[removed]', $str);
+				$str = preg_replace('</*(?:script|xss).*?>si', '[removed]', $str);
 			}
 		}
 		while ($original !== $str);
@@ -524,7 +524,7 @@ class CI_Security {
 		 * So this: <blink>
 		 * Becomes: &lt;blink&gt;
 		 */
-		$pattern = '#'
+		$pattern = ''
 			.'<((?<slash>/*\s*)((?<tagName>[a-z0-9]+)(?=[^a-z0-9]|$)|.+)' // tag start and name, followed by a non-tag character
 			.'[^\s\042\047a-z0-9>/=]*' // a valid attribute character immediately after the tag would count as a separator
 			// optional attributes
@@ -535,7 +535,7 @@ class CI_Security {
 					.'(?:[^\s\042\047=><`]+|\s*\042[^\042]*\042|\s*\047[^\047]*\047|\s*(?U:[^\s\042\047=><`]*))' // single, double or non-quoted value
 				.')?' // end optional attribute-value group
 			.')*)' // end optional attributes group
-			.'[^>]*)(?<closeTag>\>)?#isS';
+			.'[^>]*)(?<closeTag>\>)?isS';
 
 		// Note: It would be nice to optimize this for speed, BUT
 		//       only matching the naughty elements here results in
@@ -558,19 +558,19 @@ class CI_Security {
 		 * rendering the code un-executable.
 		 *
 		 * For example:	eval('some code')
-		 * Becomes:	eval&#40;'some code'&#41;
+		 * Becomes:	eval&40;'some code'&41;
 		 */
 		$str = preg_replace(
-			'#(alert|prompt|confirm|cmd|passthru|eval|exec|expression|system|fopen|fsockopen|file|file_get_contents|readfile|unlink)(\s*)\((.*?)\)#si',
-			'\\1\\2&#40;\\3&#41;',
+			'(alert|prompt|confirm|cmd|passthru|eval|exec|expression|system|fopen|fsockopen|file|file_get_contents|readfile|unlink)(\s*)\((.*?)\)si',
+			'\\1\\2&40;\\3&41;',
 			$str
 		);
 
 		// Same thing, but for "tag functions" (e.g. eval`some code`)
 		// See https://github.com/bcit-ci/CodeIgniter/issues/5420
 		$str = preg_replace(
-			'#(alert|prompt|confirm|cmd|passthru|eval|exec|expression|system|fopen|fsockopen|file|file_get_contents|readfile|unlink)(\s*)`(.*?)`#si',
-			'\\1\\2&#96;\\3&#96;',
+			'(alert|prompt|confirm|cmd|passthru|eval|exec|expression|system|fopen|fsockopen|file|file_get_contents|readfile|unlink)(\s*)`(.*?)`si',
+			'\\1\\2&96;\\3&96;',
 			$str
 		);
 
@@ -747,7 +747,7 @@ class CI_Security {
 
 			// Decode numeric & UTF16 two byte entities
 			$str = html_entity_decode(
-				preg_replace('/(&#(?:x0*[0-9a-f]{2,5}(?![0-9a-f;])|(?:0*\d{2,4}(?![0-9;]))))/iS', '$1;', $str),
+				preg_replace('/(&(?:x0*[0-9a-f]{2,5}(?![0-9a-f;])|(?:0*\d{2,4}(?![0-9;]))))/iS', '$1;', $str),
 				$flag,
 				$charset
 			);
@@ -804,8 +804,8 @@ class CI_Security {
 	{
 		return preg_replace(
 			array(
-				'#<img[\s/]+.*?src\s*=\s*(["\'])([^\\1]+?)\\1.*?\>#i',
-				'#<img[\s/]+.*?src\s*=\s*?(([^\s"\'=<>`]+)).*?\>#i'
+				'<img[\s/]+.*?src\s*=\s*(["\'])([^\\1]+?)\\1.*?\>i',
+				'<img[\s/]+.*?src\s*=\s*?(([^\s"\'=<>`]+)).*?\>i'
 			),
 			'\\2',
 			$str
@@ -824,7 +824,7 @@ class CI_Security {
 	protected function _urldecodespaces($matches)
 	{
 		$input    = $matches[0];
-		$nospaces = preg_replace('#\s+#', '', $input);
+		$nospaces = preg_replace('\s+', '', $input);
 		return ($nospaces === $input)
 			? $input
 			: rawurldecode($nospaces);
@@ -888,14 +888,14 @@ class CI_Security {
 			$attributes = array();
 
 			// Attribute-catching pattern
-			$attributes_pattern = '#'
+			$attributes_pattern = ''
 				.'(?<name>[^\s\042\047>/=]+)' // attribute characters
 				// optional attribute-value
 				.'(?:\s*=(?<value>[^\s\042\047=><`]+|\s*\042[^\042]*\042|\s*\047[^\047]*\047|\s*(?U:[^\s\042\047=><`]*)))' // attribute-value separator
-				.'#i';
+				.'i';
 
 			// Blacklist pattern for evil attribute names
-			$is_evil_pattern = '#^('.implode('|', $evil_attributes).')$#i';
+			$is_evil_pattern = '^('.implode('|', $evil_attributes).')$i';
 
 			// Each iteration filters a single attribute
 			do
@@ -903,7 +903,7 @@ class CI_Security {
 				// Strip any non-alpha characters that may precede an attribute.
 				// Browsers often parse these incorrectly and that has been a
 				// of numerous XSS issues we've had.
-				$matches['attributes'] = preg_replace('#^[^a-z]+#i', '', $matches['attributes']);
+				$matches['attributes'] = preg_replace('^[^a-z]+i', '', $matches['attributes']);
 
 				if ( ! preg_match($attributes_pattern, $matches['attributes'], $attribute, PREG_OFFSET_CAPTURE))
 				{
@@ -958,7 +958,7 @@ class CI_Security {
 		return str_replace(
 			$match[1],
 			preg_replace(
-				'#href=.*?(?:(?:alert|prompt|confirm)(?:\(|&\#40;|`|&\#96;)|javascript:|livescript:|mocha:|charset=|window\.|\(?document\)?\.|\.cookie|<script|<xss|d\s*a\s*t\s*a\s*:)#si',
+				'href=.*?(?:(?:alert|prompt|confirm)(?:\(|&\40;|`|&\96;)|javascript:|livescript:|mocha:|charset=|window\.|\(?document\)?\.|\.cookie|<script|<xss|d\s*a\s*t\s*a\s*:)si',
 				'',
 				$this->_filter_attributes($match[1])
 			),
@@ -986,7 +986,7 @@ class CI_Security {
 		return str_replace(
 			$match[1],
 			preg_replace(
-				'#src=.*?(?:(?:alert|prompt|confirm|eval)(?:\(|&\#40;|`|&\#96;)|javascript:|livescript:|mocha:|charset=|window\.|\(?document\)?\.|\.cookie|<script|<xss|base64\s*,)#si',
+				'src=.*?(?:(?:alert|prompt|confirm|eval)(?:\(|&\40;|`|&\96;)|javascript:|livescript:|mocha:|charset=|window\.|\(?document\)?\.|\.cookie|<script|<xss|base64\s*,)si',
 				'',
 				$this->_filter_attributes($match[1])
 			),
@@ -1023,11 +1023,11 @@ class CI_Security {
 	protected function _filter_attributes($str)
 	{
 		$out = '';
-		if (preg_match_all('#\s*[a-z\-]+\s*=\s*(\042|\047)([^\\1]*?)\\1#is', $str, $matches))
+		if (preg_match_all('\s*[a-z\-]+\s*=\s*(\042|\047)([^\\1]*?)\\1is', $str, $matches))
 		{
 			foreach ($matches[0] as $match)
 			{
-				$out .= preg_replace('#/\*.*?\*/#s', '', $match);
+				$out .= preg_replace('/\*.*?\*/s', '', $match);
 			}
 		}
 
@@ -1072,7 +1072,7 @@ class CI_Security {
 
 		foreach ($this->_never_allowed_regex as $regex)
 		{
-			$str = preg_replace('#'.$regex.'#is', '[removed]', $str);
+			$str = preg_replace(''.$regex.'is', '[removed]', $str);
 		}
 
 		return $str;
@@ -1094,7 +1094,7 @@ class CI_Security {
 			// each page load since a page could contain embedded
 			// sub-pages causing this feature to fail
 			if (isset($_COOKIE[$this->_csrf_cookie_name]) && is_string($_COOKIE[$this->_csrf_cookie_name])
-				&& preg_match('#^[0-9a-f]{32}$#iS', $_COOKIE[$this->_csrf_cookie_name]) === 1)
+				&& preg_match('^[0-9a-f]{32}$iS', $_COOKIE[$this->_csrf_cookie_name]) === 1)
 			{
 				return $this->_csrf_hash = $_COOKIE[$this->_csrf_cookie_name];
 			}

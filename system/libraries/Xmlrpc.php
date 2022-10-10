@@ -744,7 +744,7 @@ class XML_RPC_Client extends CI_Xmlrpc
 			{
 				break;
 			}
-			// See https://bugs.php.net/bug.php?id=39598 and http://php.net/manual/en/function.fwrite.php#96951
+			// See https://bugs.php.net/bug.php?id=39598 and http://php.net/manual/en/function.fwrite.php96951
 			elseif ($result === 0)
 			{
 				if ($timestamp === 0)

@@ -128,7 +128,7 @@ class CI_Typography {
 
 		// HTML comment tags don't conform to patterns of normal tags, so pull them out separately, only if needed
 		$html_comments = array();
-		if (strpos($str, '<!--') !== FALSE && preg_match_all('#(<!\-\-.*?\-\->)#s', $str, $matches))
+		if (strpos($str, '<!--') !== FALSE && preg_match_all('(<!\-\-.*?\-\->)s', $str, $matches))
 		{
 			for ($i = 0, $total = count($matches[0]); $i < $total; $i++)
 			{
@@ -141,22 +141,22 @@ class CI_Typography {
 		// not contain <pre> tags, and it keeps the PCRE patterns below simpler and faster
 		if (strpos($str, '<pre') !== FALSE)
 		{
-			$str = preg_replace_callback('#<pre.*?>.*?</pre>#si', array($this, '_protect_characters'), $str);
+			$str = preg_replace_callback('<pre.*?>.*?</pre>si', array($this, '_protect_characters'), $str);
 		}
 
 		// Convert quotes within tags to temporary markers.
-		$str = preg_replace_callback('#<.+?>#si', array($this, '_protect_characters'), $str);
+		$str = preg_replace_callback('<.+?>si', array($this, '_protect_characters'), $str);
 
 		// Do the same with braces if necessary
 		if ($this->protect_braced_quotes === TRUE)
 		{
-			$str = preg_replace_callback('#\{.+?\}#si', array($this, '_protect_characters'), $str);
+			$str = preg_replace_callback('\{.+?\}si', array($this, '_protect_characters'), $str);
 		}
 
 		// Convert "ignore" tags to temporary marker.  The parser splits out the string at every tag
 		// it encounters.  Certain inline tags, like image tags, links, span tags, etc. will be
 		// adversely affected if they are split out so we'll convert the opening bracket < temporarily to: {@TAG}
-		$str = preg_replace('#<(/*)('.$this->inline_elements.')([ >])#i', '{@TAG}\\1\\2\\3', $str);
+		$str = preg_replace('<(/*)('.$this->inline_elements.')([ >])i', '{@TAG}\\1\\2\\3', $str);
 
 		/* Split the string at every tag. This expression creates an array with this prototype:
 		 *
@@ -178,9 +178,9 @@ class CI_Typography {
 		{
 			// Are we dealing with a tag? If so, we'll skip the processing for this cycle.
 			// Well also set the "process" flag which allows us to skip <pre> tags and a few other things.
-			if (preg_match('#<(/*)('.$this->block_elements.').*?>#', $chunks[$i], $match))
+			if (preg_match('<(/*)('.$this->block_elements.').*?>', $chunks[$i], $match))
 			{
-				if (preg_match('#'.$this->skip_elements.'#', $match[2]))
+				if (preg_match(''.$this->skip_elements.'', $match[2]))
 				{
 					$process = ($match[1] === '/');
 				}
@@ -225,7 +225,7 @@ class CI_Typography {
 			// remove surrounding paragraph tags, but only if there's an opening paragraph tag
 			// otherwise HTML comments at the ends of paragraphs will have the closing tag removed
 			// if '<p>{@HC1}' then replace <p>{@HC1}</p> with the comment, else replace only {@HC1} with the comment
-			$str = preg_replace('#(?(?=<p>\{@HC'.$i.'\})<p>\{@HC'.$i.'\}(\s*</p>)|\{@HC'.$i.'\})#s', $html_comments[$i], $str);
+			$str = preg_replace('(?(?=<p>\{@HC'.$i.'\})<p>\{@HC'.$i.'\}(\s*</p>)|\{@HC'.$i.'\})s', $html_comments[$i], $str);
 		}
 
 		// Final clean up
@@ -236,14 +236,14 @@ class CI_Typography {
 						'/(<p[^>*?]>)<p>/'	=> '$1', // <?php BBEdit syntax coloring bug fix
 
 						// Reduce multiple instances of opening/closing paragraph tags to a single one
-						'#(</p>)+#'			=> '</p>',
+						'(</p>)+'			=> '</p>',
 						'/(<p>\W*<p>)+/'	=> '<p>',
 
 						// Clean up stray paragraph tags that appear before block level elements
-						'#<p></p><('.$this->block_elements.')#'	=> '<$1',
+						'<p></p><('.$this->block_elements.')'	=> '<$1',
 
 						// Clean up stray non-breaking spaces preceding block elements
-						'#(&nbsp;\s*)+<('.$this->block_elements.')#'	=> '  <$2',
+						'(&nbsp;\s*)+<('.$this->block_elements.')'	=> '  <$2',
 
 						// Replace the temporary markers we added earlier
 						'/\{@TAG\}/'		=> '<',
@@ -260,19 +260,19 @@ class CI_Typography {
 
 						// Similarly, there might be cases where a closing </block> will follow
 						// a closing </p> tag, so we'll correct it by adding a newline in between
-						'#</p></#'			=> "</p>\n</"
+						'</p></'			=> "</p>\n</"
 						);
 
 		// Do we need to reduce empty lines?
 		if ($reduce_linebreaks === TRUE)
 		{
-			$table['#<p>\n*</p>#'] = '';
+			$table['<p>\n*</p>'] = '';
 		}
 		else
 		{
 			// If we have empty paragraph tags we add a non-breaking space
 			// otherwise most browsers won't treat them as true paragraphs
-			$table['#<p></p>#'] = '<p>&nbsp;</p>';
+			$table['<p></p>'] = '<p>&nbsp;</p>';
 		}
 
 		return preg_replace(array_keys($table), $table, $str);
@@ -305,39 +305,39 @@ class CI_Typography {
 							// Note that in all cases, whitespace is the primary determining factor
 							// on which direction to curl, with non-word characters like punctuation
 							// being a secondary factor only after whitespace is addressed.
-							'/\'"(\s|$)/'					=> '&#8217;&#8221;$1',
-							'/(^|\s|<p>)\'"/'				=> '$1&#8216;&#8220;',
-							'/\'"(\W)/'						=> '&#8217;&#8221;$1',
-							'/(\W)\'"/'						=> '$1&#8216;&#8220;',
-							'/"\'(\s|$)/'					=> '&#8221;&#8217;$1',
-							'/(^|\s|<p>)"\'/'				=> '$1&#8220;&#8216;',
-							'/"\'(\W)/'						=> '&#8221;&#8217;$1',
-							'/(\W)"\'/'						=> '$1&#8220;&#8216;',
+							'/\'"(\s|$)/'					=> '&8217;&8221;$1',
+							'/(^|\s|<p>)\'"/'				=> '$1&8216;&8220;',
+							'/\'"(\W)/'						=> '&8217;&8221;$1',
+							'/(\W)\'"/'						=> '$1&8216;&8220;',
+							'/"\'(\s|$)/'					=> '&8221;&8217;$1',
+							'/(^|\s|<p>)"\'/'				=> '$1&8220;&8216;',
+							'/"\'(\W)/'						=> '&8221;&8217;$1',
+							'/(\W)"\'/'						=> '$1&8220;&8216;',
 
 							// single quote smart quotes
-							'/\'(\s|$)/'					=> '&#8217;$1',
-							'/(^|\s|<p>)\'/'				=> '$1&#8216;',
-							'/\'(\W)/'						=> '&#8217;$1',
-							'/(\W)\'/'						=> '$1&#8216;',
+							'/\'(\s|$)/'					=> '&8217;$1',
+							'/(^|\s|<p>)\'/'				=> '$1&8216;',
+							'/\'(\W)/'						=> '&8217;$1',
+							'/(\W)\'/'						=> '$1&8216;',
 
 							// double quote smart quotes
-							'/"(\s|$)/'						=> '&#8221;$1',
-							'/(^|\s|<p>)"/'					=> '$1&#8220;',
-							'/"(\W)/'						=> '&#8221;$1',
-							'/(\W)"/'						=> '$1&#8220;',
+							'/"(\s|$)/'						=> '&8221;$1',
+							'/(^|\s|<p>)"/'					=> '$1&8220;',
+							'/"(\W)/'						=> '&8221;$1',
+							'/(\W)"/'						=> '$1&8220;',
 
 							// apostrophes
-							"/(\w)'(\w)/"					=> '$1&#8217;$2',
+							"/(\w)'(\w)/"					=> '$1&8217;$2',
 
 							// Em dash and ellipses dots
-							'/\s?\-\-\s?/'					=> '&#8212;',
-							'/(\w)\.{3}/'					=> '$1&#8230;',
+							'/\s?\-\-\s?/'					=> '&8212;',
+							'/(\w)\.{3}/'					=> '$1&8230;',
 
 							// double space after sentences
 							'/(\W)  /'						=> '$1&nbsp; ',
 
 							// ampersands, if not a character entity
-							'/&(?!#?[a-zA-Z0-9]{2,};)/'		=> '&amp;'
+							'/&(?!?[a-zA-Z0-9]{2,};)/'		=> '&amp;'
 						);
 		}
 

@@ -1939,14 +1939,14 @@ abstract class CI_DB_driver {
 				isset($ec[0]) && $ec .= '?'; // Just in case someone has disabled escaping by forcing an empty escape character
 
 				// Verify table prefix and replace if necessary
-				if ($this->swap_pre !== '' && preg_match('#^'.$ec.preg_quote($this->swap_pre).'#', $parts[$i]))
+				if ($this->swap_pre !== '' && preg_match('^'.$ec.preg_quote($this->swap_pre).'', $parts[$i]))
 				{
-					$parts[$i] = preg_replace('#^'.$ec.preg_quote($this->swap_pre).'(\S+?)#', '\\1'.$this->dbprefix.'\\2', $parts[$i]);
+					$parts[$i] = preg_replace('^'.$ec.preg_quote($this->swap_pre).'(\S+?)', '\\1'.$this->dbprefix.'\\2', $parts[$i]);
 				}
 				// We only add the table prefix if it does not already exist
 				else
 				{
-					preg_match('#^'.$ec.preg_quote($this->dbprefix).'#', $parts[$i]) OR $parts[$i] = $this->dbprefix.$parts[$i];
+					preg_match('^'.$ec.preg_quote($this->dbprefix).'', $parts[$i]) OR $parts[$i] = $this->dbprefix.$parts[$i];
 				}
 
 				// Put the parts back together

@@ -248,7 +248,7 @@ class CI_Image_lib {
 	 *
 	 * @var string
 	 */
-	protected $wm_font_color	= '#ffffff';
+	protected $wm_font_color	= 'ffffff';
 
 	/**
 	 * Dropshadow color
@@ -440,7 +440,7 @@ class CI_Image_lib {
 		$this->wm_padding 			= 0;
 		$this->wm_hor_offset 		= 0;
 		$this->wm_vrt_offset 		= 0;
-		$this->wm_font_color		= '#ffffff';
+		$this->wm_font_color		= 'ffffff';
 		$this->wm_shadow_distance 	= 2;
 		$this->wm_opacity 			= 50;
 		$this->create_fnc 			= 'imagecreatetruecolor';
@@ -469,7 +469,7 @@ class CI_Image_lib {
 				{
 					if (in_array($key, array('wm_font_color', 'wm_shadow_color'), TRUE))
 					{
-						if (preg_match('/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i', $val, $matches))
+						if (preg_match('/^?([0-9a-f]{3}|[0-9a-f]{6})$/i', $val, $matches))
 						{
 							/* $matches[1] contains our hex color value, but it might be
 							 * both in the full 6-length format or the shortened 3-length
@@ -481,8 +481,8 @@ class CI_Image_lib {
 							 * value:
 							 */
 							$val = (strlen($matches[1]) === 6)
-								? '#'.$matches[1]
-								: '#'.$matches[1][0].$matches[1][0].$matches[1][1].$matches[1][1].$matches[1][2].$matches[1][2];
+								? ''.$matches[1]
+								: ''.$matches[1][0].$matches[1][0].$matches[1][1].$matches[1][1].$matches[1][2].$matches[1][2];
 						}
 						else
 						{
@@ -566,7 +566,7 @@ class CI_Image_lib {
 		else
 		{
 			// Is there a file name?
-			if ( ! preg_match('#\.(jpg|jpeg|gif|png)$#i', $this->new_image))
+			if ( ! preg_match('\.(jpg|jpeg|gif|png)$i', $this->new_image))
 			{
 				$this->dest_image  = $this->source_image;
 				$this->dest_folder = $this->new_image;
@@ -1364,7 +1364,7 @@ class CI_Image_lib {
 
 			/* Set RGB values for shadow
 			 *
-			 * First character is #, so we don't really need it.
+			 * First character is , so we don't really need it.
 			 * Get the rest of the string and split it into 2-length
 			 * hex values:
 			 */
@@ -1384,7 +1384,7 @@ class CI_Image_lib {
 
 		/* Set RGB values for text
 		 *
-		 * First character is #, so we don't really need it.
+		 * First character is , so we don't really need it.
 		 * Get the rest of the string and split it into 2-length
 		 * hex values:
 		 */

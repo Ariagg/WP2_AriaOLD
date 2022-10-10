@@ -113,7 +113,7 @@ class CI_DB_mysql_utility extends CI_DB_utility {
 			}
 
 			// Write out the table schema
-			$output .= '#'.$newline.'# TABLE STRUCTURE FOR: '.$table.$newline.'#'.$newline.$newline;
+			$output .= ''.$newline.' TABLE STRUCTURE FOR: '.$table.$newline.''.$newline.$newline;
 
 			if ($add_drop === TRUE)
 			{

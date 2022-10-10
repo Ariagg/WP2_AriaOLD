@@ -162,7 +162,7 @@ if ( ! function_exists('anchor'))
 
 		$site_url = is_array($uri)
 			? site_url($uri)
-			: (preg_match('#^(\w+:)?//#i', $uri) ? $uri : site_url($uri));
+			: (preg_match('^(\w+:)?//i', $uri) ? $uri : site_url($uri));
 
 		if ($title === '')
 		{
@@ -196,7 +196,7 @@ if ( ! function_exists('anchor_popup'))
 	function anchor_popup($uri = '', $title = '', $attributes = FALSE)
 	{
 		$title = (string) $title;
-		$site_url = preg_match('#^(\w+:)?//#i', $uri) ? $uri : site_url($uri);
+		$site_url = preg_match('^(\w+:)?//i', $uri) ? $uri : site_url($uri);
 
 		if ($title === '')
 		{
@@ -364,7 +364,7 @@ if ( ! function_exists('safe_mailto'))
 		}
 
 		$output .= "\n\tfor (var i = l.length-1; i >= 0; i=i-1) {\n"
-			."\t\tif (l[i].substring(0, 1) === '|') document.write(\"&#\"+unescape(l[i].substring(1))+\";\");\n"
+			."\t\tif (l[i].substring(0, 1) === '|') document.write(\"&\"+unescape(l[i].substring(1))+\";\");\n"
 			."\t\telse document.write(unescape(l[i]));\n"
 			."\t}\n"
 			."\t//]]>\n"
@@ -394,7 +394,7 @@ if ( ! function_exists('auto_link'))
 	function auto_link($str, $type = 'both', $popup = FALSE)
 	{
 		// Find and replace any URLs.
-		if ($type !== 'email' && preg_match_all('#(\w*://|www\.)[a-z0-9]+(-+[a-z0-9]+)*(\.[a-z0-9]+(-+[a-z0-9]+)*)+(/([^\s()<>;]+\w)?/?)?#i', $str, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER))
+		if ($type !== 'email' && preg_match_all('(\w*://|www\.)[a-z0-9]+(-+[a-z0-9]+)*(\.[a-z0-9]+(-+[a-z0-9]+)*)+(/([^\s()<>;]+\w)?/?)?i', $str, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER))
 		{
 			// Set our target HTML if using popup links.
 			$target = ($popup) ? ' target="_blank" rel="noopener"' : '';
@@ -415,7 +415,7 @@ if ( ! function_exists('auto_link'))
 		}
 
 		// Find and replace any emails.
-		if ($type !== 'url' && preg_match_all('#([\w\.\-\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[^[:punct:]\s])#i', $str, $matches, PREG_OFFSET_CAPTURE))
+		if ($type !== 'url' && preg_match_all('([\w\.\-\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[^[:punct:]\s])i', $str, $matches, PREG_OFFSET_CAPTURE))
 		{
 			foreach (array_reverse($matches[0]) as $match)
 			{
@@ -489,7 +489,7 @@ if ( ! function_exists('url_title'))
 			$separator = '_';
 		}
 
-		$q_separator = preg_quote($separator, '#');
+		$q_separator = preg_quote($separator, '');
 
 		$trans = array(
 			'&.+?;'			=> '',
@@ -501,7 +501,7 @@ if ( ! function_exists('url_title'))
 		$str = strip_tags($str);
 		foreach ($trans as $key => $val)
 		{
-			$str = preg_replace('#'.$key.'#i'.(UTF8_ENABLED ? 'u' : ''), $val, $str);
+			$str = preg_replace(''.$key.'i'.(UTF8_ENABLED ? 'u' : ''), $val, $str);
 		}
 
 		if ($lowercase === TRUE)
@@ -532,7 +532,7 @@ if ( ! function_exists('redirect'))
 	 */
 	function redirect($uri = '', $method = 'auto', $code = NULL)
 	{
-		if ( ! preg_match('#^(\w+:)?//#i', $uri))
+		if ( ! preg_match('^(\w+:)?//i', $uri))
 		{
 			$uri = site_url($uri);
 		}

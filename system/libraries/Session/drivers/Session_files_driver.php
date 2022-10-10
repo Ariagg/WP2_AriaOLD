@@ -375,7 +375,7 @@ class CI_Session_files_driver extends CI_Session_driver implements CI_Session_dr
 			: '';
 
 		$pattern = sprintf(
-			'#\A%s'.$pattern.$this->_sid_regexp.'\z#',
+			'\A%s'.$pattern.$this->_sid_regexp.'\z',
 			preg_quote($this->_config['cookie_name'])
 		);
 

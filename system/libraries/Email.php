@@ -1096,7 +1096,7 @@ class CI_Email {
 		}
 
 		$body = preg_match('/\<body.*?\>(.*)\<\/body\>/si', $this->_body, $match) ? $match[1] : $this->_body;
-		$body = str_replace("\t", '', preg_replace('#<!--(.*)--\>#', '', trim(strip_tags($body))));
+		$body = str_replace("\t", '', preg_replace('<!--(.*)--\>', '', trim(strip_tags($body))));
 
 		for ($i = 20; $i >= 3; $i--)
 		{
@@ -1871,7 +1871,7 @@ class CI_Email {
 			}
 		}
 
-		return (filter_var($email, FILTER_VALIDATE_EMAIL) === $email && preg_match('#\A[a-z0-9._+-]+@[a-z0-9.-]{1,253}\z#i', $email));
+		return (filter_var($email, FILTER_VALIDATE_EMAIL) === $email && preg_match('\A[a-z0-9._+-]+@[a-z0-9.-]{1,253}\zi', $email));
 	}
 
 	// --------------------------------------------------------------------
@@ -2270,7 +2270,7 @@ class CI_Email {
 			{
 				break;
 			}
-			// See https://bugs.php.net/bug.php?id=39598 and http://php.net/manual/en/function.fwrite.php#96951
+			// See https://bugs.php.net/bug.php?id=39598 and http://php.net/manual/en/function.fwrite.php96951
 			elseif ($result === 0)
 			{
 				if ($timestamp === 0)
@@ -2332,7 +2332,7 @@ class CI_Email {
 	 * qualified domain name (eg: "mail.example.com") or an IP literal
 	 * (eg: "[1.2.3.4]").
 	 *
-	 * @link	https://tools.ietf.org/html/rfc5321#section-2.3.5
+	 * @link	https://tools.ietf.org/html/rfc5321section-2.3.5
 	 * @link	http://cbl.abuseat.org/namingproblems.html
 	 * @return	string
 	 */

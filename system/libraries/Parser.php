@@ -209,7 +209,7 @@ class CI_Parser {
 	{
 		$replace = array();
 		preg_match_all(
-			'#'.preg_quote($this->l_delim.$variable.$this->r_delim).'(.+?)'.preg_quote($this->l_delim.'/'.$variable.$this->r_delim).'#s',
+			''.preg_quote($this->l_delim.$variable.$this->r_delim).'(.+?)'.preg_quote($this->l_delim.'/'.$variable.$this->r_delim).'s',
 			$string,
 			$matches,
 			PREG_SET_ORDER

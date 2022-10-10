@@ -653,7 +653,7 @@ class CI_Pagination {
 
 		// Kill double slashes. Note: Sometimes we can end up with a double slash
 		// in the penultimate link so we'll kill all double slashes.
-		$output = preg_replace('#([^:"])//+#', '\\1/', $output);
+		$output = preg_replace('([^:"])//+', '\\1/', $output);
 
 		// Add the wrapper HTML if exists
 		return $this->full_tag_open.$output.$this->full_tag_close;
@@ -687,7 +687,7 @@ class CI_Pagination {
 	/**
 	 * Add "rel" attribute
 	 *
-	 * @link	https://www.w3.org/TR/html5/links.html#linkTypes
+	 * @link	https://www.w3.org/TR/html5/links.htmllinkTypes
 	 * @param	string	$type
 	 * @return	string
 	 */

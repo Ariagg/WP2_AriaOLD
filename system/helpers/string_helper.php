@@ -135,7 +135,7 @@ if ( ! function_exists('quotes_to_entities'))
 	 */
 	function quotes_to_entities($str)
 	{
-		return str_replace(array("\'","\"","'",'"'), array("&#39;","&quot;","&#39;","&quot;"), $str);
+		return str_replace(array("\'","\"","'",'"'), array("&39;","&quot;","&39;","&quot;"), $str);
 	}
 }
 
@@ -160,7 +160,7 @@ if ( ! function_exists('reduce_double_slashes'))
 	 */
 	function reduce_double_slashes($str)
 	{
-		return preg_replace('#(^|[^:])//+#', '\\1/', $str);
+		return preg_replace('(^|[^:])//+', '\\1/', $str);
 	}
 }
 
@@ -186,7 +186,7 @@ if ( ! function_exists('reduce_multiples'))
 	 */
 	function reduce_multiples($str, $character = ',', $trim = FALSE)
 	{
-		$str = preg_replace('#'.preg_quote($character, '#').'{2,}#', $character, $str);
+		$str = preg_replace(''.preg_quote($character, '').'{2,}', $character, $str);
 		return ($trim === TRUE) ? trim($str, $character) : $str;
 	}
 }

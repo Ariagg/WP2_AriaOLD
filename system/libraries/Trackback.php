@@ -141,7 +141,7 @@ class CI_Trackback {
 					$$item = $this->limit_characters($this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
 					break;
 				case 'url':
-					$$item = str_replace('&#45;', '-', $this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
+					$$item = str_replace('&45;', '-', $this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
 					break;
 				default:
 					$$item = $this->convert_xml(strip_tags(stripslashes($tb_data[$item])));
@@ -430,13 +430,13 @@ class CI_Trackback {
 	{
 		$temp = '__TEMP_AMPERSANDS__';
 
-		$str = preg_replace(array('/&#(\d+);/', '/&(\w+);/'), $temp.'\\1;', $str);
+		$str = preg_replace(array('/&(\d+);/', '/&(\w+);/'), $temp.'\\1;', $str);
 
 		$str = str_replace(array('&', '<', '>', '"', "'", '-'),
-					array('&amp;', '&lt;', '&gt;', '&quot;', '&#39;', '&#45;'),
+					array('&amp;', '&lt;', '&gt;', '&quot;', '&39;', '&45;'),
 					$str);
 
-		return preg_replace(array('/'.$temp.'(\d+);/', '/'.$temp.'(\w+);/'), array('&#\\1;', '&\\1;'), $str);
+		return preg_replace(array('/'.$temp.'(\d+);/', '/'.$temp.'(\w+);/'), array('&\\1;', '&\\1;'), $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -451,7 +451,7 @@ class CI_Trackback {
 	 * @param	string
 	 * @return	string
 	 */
-	public function limit_characters($str, $n = 500, $end_char = '&#8230;')
+	public function limit_characters($str, $n = 500, $end_char = '&8230;')
 	{
 		if (strlen($str) < $n)
 		{
@@ -516,7 +516,7 @@ class CI_Trackback {
 						? (($temp[0] % 16) * 4096) + (($temp[1] % 64) * 64) + ($temp[2] % 64)
 						: (($temp[0] % 32) * 64) + ($temp[1] % 64);
 
-					$out .= '&#'.$number.';';
+					$out .= '&'.$number.';';
 					$count = 1;
 					$temp = array();
 				}

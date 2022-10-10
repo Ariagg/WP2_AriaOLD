@@ -216,7 +216,7 @@ class CI_DB_postgre_driver extends CI_DB {
 		 * and so we'll have to fall back to running a query in
 		 * order to get it.
 		 */
-		return (isset($pg_version['server']) && preg_match('#^(\d+\.\d+)#', $pg_version['server'], $match))
+		return (isset($pg_version['server']) && preg_match('^(\d+\.\d+)', $pg_version['server'], $match))
 			? $this->data_cache['version'] = $match[1]
 			: parent::version();
 	}
@@ -280,7 +280,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 */
 	public function is_write_type($sql)
 	{
-		if (preg_match('#^(INSERT|UPDATE).*RETURNING\s.+(\,\s?.+)*$#is', $sql))
+		if (preg_match('^(INSERT|UPDATE).*RETURNING\s.+(\,\s?.+)*$is', $sql))
 		{
 			return FALSE;
 		}

@@ -187,7 +187,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 				// to FALSE didn't do anything, so PHP 5.6.16 introduced yet another
 				// constant ...
 				//
-				// https://secure.php.net/ChangeLog-5.php#5.6.16
+				// https://secure.php.net/ChangeLog-5.php5.6.16
 				// https://bugs.php.net/bug.php?id=68344
 				elseif (defined('MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT'))
 				{

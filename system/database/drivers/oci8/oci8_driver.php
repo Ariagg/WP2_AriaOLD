@@ -257,7 +257,7 @@ class CI_DB_oci8_driver extends CI_DB {
 		{
 			return FALSE;
 		}
-		elseif (preg_match('#Release\s(\d+(?:\.\d+)+)#', $version_string, $match))
+		elseif (preg_match('Release\s(\d+(?:\.\d+)+)', $version_string, $match))
 		{
 			return $this->data_cache['version'] = $match[1];
 		}
